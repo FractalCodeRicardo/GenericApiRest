@@ -2,13 +2,16 @@ package com.generics.genericapirest.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.generics.genericapirest.services.Service;
 import com.generics.genericapirest.models.Model;
@@ -16,7 +19,7 @@ import com.generics.genericapirest.models.Model;
 public class Controller<T extends Model> {
 
 	@Autowired
-	Service<T> service;
+	private Service<T> service;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public List<T> list() {
@@ -41,6 +44,14 @@ public class Controller<T extends Model> {
 
 	@RequestMapping(value = "{id}", method = RequestMethod.GET)
 	public T get(@PathVariable(value = "id") long id) {
-		return null;
+		Optional<T> entity = service.get(id);
+
+		if (!entity.isPresent()) {
+			throw new ResponseStatusException(
+				HttpStatus.NO_CONTENT, "entity not found"
+				);
+		}
+
+		return entity.get();
 	}
 }

@@ -2,6 +2,7 @@ package com.generics.genericapirest.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import com.generics.genericapirest.models.Model;
 public class Service<T extends Model> {
     
     @Autowired
-    Repository<T> repo;
+    private Repository<T> repo;
 
     public T save(T entity) {
         return repo.save(entity);
@@ -29,5 +30,9 @@ public class Service<T extends Model> {
 
     public void delete(long id) {
         repo.deleteById(id);
+    }
+
+    public Optional<T> get(long id) {
+        return repo.findById(id);
     }
 }
